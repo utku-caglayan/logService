@@ -14,13 +14,16 @@ NODE_ENV !== "production" ? app.use(morgan('dev')) : app.use(morgan('combined'))
 
 app.use(helmet());
 app.use(cors());
-app.use('/api/logs', logsRoute);
 
+router = express.Router();
+// register analytics routes
+logsRoute.analytics(router)
+app.use("/v1", router)
 
 
 app.listen(MAIN_PORT);
 if (NODE_ENV !== "production" ) {
-    console.log(`LogPublisher service is running at http://localhost:${MAIN_PORT}`);
+    console.log(`LogAnalytics service is running at http://localhost:${MAIN_PORT}`);
 }
 
 process.on('unhandledRejection', err => {

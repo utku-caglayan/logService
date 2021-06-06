@@ -1,16 +1,15 @@
 {
-  "name": "cloud-pub-sub-tut",
+  "name": "log-analysis-infra",
   "version": "1.0.0",
-  "description": "source code for cloud pub/sub tutorial",
   "main": "src/logs.js",
   "scripts": {
     "start": "NODE_ENV=production node src/logs.js",
-    "start:producer": "nodemon src/logs.js",
-    "start:consumer": "nodemon src/consumer-subscription.js",
-    "start:notification": "nodemon src/notification-sub.js",
-    "start:sample": "nodemon src/sample-data-client.js"
+    "start:analytics": "nodemon src/logs.js",
+    "start:producer": "nodemon src/producer.js",
+    "start:consumer": "nodemon src/consumer.js",
+    "start:sampleTest": "nodemon src/scripts/sample-data-client.js",
+    "test": "mocha"
   },
-  "author": "Nkere-Awaji Inwan (enkay) <enkaypeter@gmail.com)",
   "license": "MIT",
   "dependencies": {
     "@google-cloud/bigquery": "^5.5.0",
@@ -23,6 +22,8 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^8.4.0",
     "nodemon": "^2.0.2"
   }
 }

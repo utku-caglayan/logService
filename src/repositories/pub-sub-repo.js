@@ -1,24 +1,21 @@
-module.exports = {
-    publishMessage: async (pubSubClient, topicName, payload) => {
-        const dataBuffer = Buffer.from(JSON.stringify(payload));
+const { PubSub  } = require("@google-cloud/pubsub");
+const pubSubClient = new PubSub();
+const subscriptionName = "LogSink-sub";
+const topicName = "LogSink";
 
-        const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
+module.exports = {
+    publishMessage: async (payload) => {
+        const messageId = await pubSubClient.topic(topicName).publish(payload);
         console.log(`Message ${messageId} published.`);
         return messageId;
     },
 
-    listenForPullMessageWithCallback: async (pubSubClient, subscriptionName, callback) => {
+    subscribeCallback: async (callback) => {
         const subscription = pubSubClient.subscription(subscriptionName);
-
         let messageCount = 0;
-        const messageHandler = message => {
-            const data = message.data.toString()
-            console.log(`Received message ${data}:`);
-            messageCount += 1;
-            callback(JSON.parse(data))
-            message.ack();
+        const messageHandler = (message) => {
+            callback(message)
         };
-
         subscription.on('message', messageHandler);
     }
 };

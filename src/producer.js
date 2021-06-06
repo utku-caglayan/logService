@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const app = express();
-const consumerRoutes = require('./routes/consumer.js');
+const logsRoute = require('./routes/logs');
 const helmet = require('helmet');
 const cors = require('cors');
 
@@ -14,11 +14,18 @@ NODE_ENV !== "production" ? app.use(morgan('dev')) : app.use(morgan('combined'))
 
 app.use(helmet());
 app.use(cors());
-app.use('/api/consumer', consumerRoutes);
 
-
+router = express.Router();
+// register log post
+logsRoute.post(router)
+app.use("/v1", router)
 
 app.listen(PORT_1);
 if (NODE_ENV !== "production" ) {
-    console.log(`Delivery service is running at http://localhost:${PORT_1}`);
+    console.log(`LogPublisher service is running at http://localhost:${PORT_1}`);
 }
+
+process.on('unhandledRejection', err => {
+    console.error(err.message);
+    process.exitCode = 1;
+});

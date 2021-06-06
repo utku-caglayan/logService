@@ -1,15 +1,18 @@
 const express = require('express');
-const router = express();
 const logsController = require("../controllers/logs-controller");
 
-router.get("/", logsController.logs);
-// Producer route
-router.post("/create", logsController.createLogs);
+exports.post = (app) => {
+    const router = express.Router({mergeParams: true});
+    // Producer route
+    router.post("/create", logsController.createLogs);
+    app.use("/logs", router)
+}
 
-// Query routes
-router.get("/daily-active-user", logsController.dailyActiveUser);
-router.get("/daily-avg-usage-duration", logsController.dailyAverageUserDuration);
-router.get("/total-user-count", logsController.totalUser);
+exports.analytics = (app) => {
+    const router = express.Router({mergeParams: true});
+    router.get("/daily-active-user", logsController.dailyActiveUser);
+    router.get("/daily-avg-usage-duration", logsController.dailyAverageUserDuration);
+    router.get("/total-user-count", logsController.totalUser);
 
-
-module.exports = router;
+    app.use("/logs/analytics", router)
+}

@@ -1,6 +1,3 @@
-const { PubSub, v1 } = require("@google-cloud/pubsub");
-const pubSubClient = new PubSub();
-const topicName = "LogSink";
 
 const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery();
@@ -12,6 +9,10 @@ const bigqueryRepository = require("../repositories/big-query-repo");
 const { executeQuery } = bigqueryRepository
 
 
+const LogProducer = require("../services/log_producer")
+const logProducer = new LogProducer(async (data) => {
+    return publishMessage(data)
+})
 
 const dailyActiveUserQuery = `SELECT TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(event_time), DAY, "UTC") as day, count(distinct user_id) as user_count
                                 FROM \`resolute-grin-311106.logs.logs\` 
@@ -39,7 +40,7 @@ module.exports = {
 
     createLogs: async (req, res) => {
         let logObj = req.body;
-        let messageId = await publishMessage(pubSubClient, topicName, logObj);
+        let messageId = await logProducer.publish(logObj)
         return res.status(200).json({
             success: true,
             message: `Message ${messageId} published `
